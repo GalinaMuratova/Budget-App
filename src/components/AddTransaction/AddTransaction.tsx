@@ -3,7 +3,7 @@ import './addTransaction.css';
 import {Expense, Income} from "../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
-import {addDish} from "../../containers/Home/homeSlice";
+import {addTransition} from "../../containers/Home/homeSlice";
 import Spinner from "../Spinner/Spinner";
 
 interface Props {
@@ -11,15 +11,19 @@ interface Props {
 }
 
 const AddTransaction:React.FC<Props> = ({onClose}) => {
-    const [info, setInfo] = useState<ITrans>({ type: '', category: '', amount: 0 });
+    const [info, setInfo] = useState<ITrans>({time: '', type: '', category: '', amount: 0 });
     const dispatch:AppDispatch = useDispatch();
     const loading = useSelector((state:RootState) => state.homeReducer.addTransitionLoading);
+    const now = new Date();
+    const createdAt = now.toISOString();
 
     const submit = async(e:React.FormEvent) => {
         e.preventDefault();
-        await dispatch(addDish(info));
+
+        await dispatch(addTransition(info));
         setInfo((prevState) => ({
             ...prevState,
+            time:'',
             type: '',
             category: '',
             amount: 0
@@ -33,9 +37,11 @@ const AddTransaction:React.FC<Props> = ({onClose}) => {
             ...prevState,
             [name]: value,
         }));
-        console.log(info);
+        setInfo((prevState) => ({
+            ...prevState,
+            time: createdAt
+        }));
     };
-
 
     let options = <></>
 
@@ -73,6 +79,7 @@ const AddTransaction:React.FC<Props> = ({onClose}) => {
                     name='type'
                     onChange={change}
                     value={info.type}
+                    required
                     className='form-select my-4'>
                     <option value=''>Select type</option>
                     <option value='income'>Income</option>
@@ -83,6 +90,7 @@ const AddTransaction:React.FC<Props> = ({onClose}) => {
                     name='category'
                     onChange={change}
                     value={info.category}
+                    required
                     className='form-select my-4'>
                     <option value=''>Select category</option>
                     {options}
@@ -92,6 +100,7 @@ const AddTransaction:React.FC<Props> = ({onClose}) => {
                     id='amount'
                     name='amount'
                     onChange={change}
+                    required
                     className='form-control mb-5'/>
                 {btn}
             </form>

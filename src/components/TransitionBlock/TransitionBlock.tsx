@@ -18,9 +18,8 @@ interface Props {
 const TransitionBlock:React.FC<Props> = (props) => {
     const deleteLoading = useSelector((state:RootState) => state.homeReducer.deleteLoading);
 
-
     let btn = (
-        <div>
+        <div className='col-2'>
             <button onClick={props.onOpen} className='btn btn-primary me-2'>Edit</button>
             <button onClick={props.onDelete} className='btn btn-danger'>Delete</button>
         </div>
@@ -32,15 +31,15 @@ const TransitionBlock:React.FC<Props> = (props) => {
     let amount = <></>;
 
     if(props.type === 'income') {
-        amount = <div className='color-green'>+{props.amount}</div>
+        amount = <div className='color-green col-2'>+{props.amount}KGS</div>
     } else if(props.type === 'expense') {
-        amount = <div className='color-red'>-{props.amount}</div>
+        amount = <div className='color-red col-2'>-{props.amount}KGS</div>
     }
 
     return (
         <div className='card d-flex flex-row justify-content-between my-4 mx-2 py-3 px-4'>
-            <span>{dayjs(props.time).format('DD.MM.YYYY HH:mm:ss')}</span>
-            <p>{props.category}</p>
+            <span className='col-2'>{dayjs(props.time).format('DD.MM.YYYY HH:mm:ss')}</span>
+            <p className='col'>{props.category}</p>
             {amount}
             {btn}
         </div>

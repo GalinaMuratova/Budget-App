@@ -2,8 +2,8 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {fetchTransition, updateTransition} from "../../containers/Home/homeSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
-import {Expense, Income} from "../../constants";
 import Spinner from "../Spinner/Spinner";
+import {fetchCategories} from "../../containers/Categories/categoriesSlice";
 
 interface Props {
     onClose: () => void;
@@ -15,10 +15,15 @@ const EditTransaction:React.FC<Props> = ({onClose, id}) => {
     const [info, setInfo] = useState<ITrans>({time: '', type: '', category: '', amount: 0 });
     const transition = useSelector((state:RootState) => state.homeReducer.transition);
     const editLoading = useSelector((state:RootState) => state.homeReducer.editLoading);
+    const categories = useSelector((state:RootState) => state.categoriesReducer.categories);
 
     useEffect(() => {
         dispatch(fetchTransition(id));
     }, [dispatch, id]);
+
+    useEffect(() => {
+        dispatch(fetchCategories());
+    }, [dispatch]);
 
     useEffect(() => {
         if (transition !== null ) {
@@ -46,15 +51,23 @@ const EditTransaction:React.FC<Props> = ({onClose, id}) => {
 
     if (info.type === 'income') {
         options = <>
-            {Income.map((el) => (
-                <option key={el.id} value={el.title}>{el.title}</option>
-            ))}
+            {categories.map((el) => {
+                let option = <></>;
+                if (el.type === 'income') {
+                    option = ( <option key={el.id} value={el.category}>{el.category}</option>);
+                }
+                return option;
+            })}
         </>
     } else if (info.type === 'expense') {
         options = <>
-            {Expense.map((el) => (
-                <option key={el.id} value={el.title}>{el.title}</option>
-            ))}
+            {categories.map((el) => {
+                let option = <></>;
+                if (el.type === 'expense') {
+                     option = ( <option key={el.id} value={el.category}>{el.category}</option>);
+                }
+                return option;
+            })}
         </>
     }
 

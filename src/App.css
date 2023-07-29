@@ -23,3 +23,15 @@
   align-items: center;
   justify-content: center;
 }
+
+.color-green {
+  color: lightgreen;
+  font-size: 18px;
+  font-weight: bold;
+}
+.color-red {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+}
+

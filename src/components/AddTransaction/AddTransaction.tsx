@@ -1,10 +1,10 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import './addTransaction.css';
-import {Expense, Income} from "../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
 import {addTransition} from "../../containers/Home/homeSlice";
 import Spinner from "../Spinner/Spinner";
+import {fetchCategories} from "../../containers/Categories/categoriesSlice";
 
 interface Props {
     onClose: () => void;
@@ -14,8 +14,13 @@ const AddTransaction:React.FC<Props> = ({onClose}) => {
     const [info, setInfo] = useState<ITrans>({time: '', type: '', category: '', amount: 0 });
     const dispatch:AppDispatch = useDispatch();
     const loading = useSelector((state:RootState) => state.homeReducer.addTransitionLoading);
+    const categories = useSelector((state:RootState) => state.categoriesReducer.categories);
     const now = new Date();
     const createdAt = now.toISOString();
+
+    useEffect(() => {
+        dispatch(fetchCategories());
+    }, [dispatch]);
 
     const submit = async(e:React.FormEvent) => {
         e.preventDefault();
@@ -43,19 +48,27 @@ const AddTransaction:React.FC<Props> = ({onClose}) => {
         }));
     };
 
-    let options = <></>
+    let options = (<></>);
 
     if (info.type === 'income') {
         options = <>
-            {Income.map((el) => (
-                <option key={el.id} value={el.title}>{el.title}</option>
-            ))}
+            {categories.map((el) => {
+                let option = <></>;
+                if (el.type === 'income') {
+                    option = ( <option key={el.id} value={el.category}>{el.category}</option>);
+                }
+                return option;
+            })}
         </>
     } else if (info.type === 'expense') {
         options = <>
-            {Expense.map((el) => (
-                <option key={el.id} value={el.title}>{el.title}</option>
-            ))}
+            {categories.map((el) => {
+                let option = <></>;
+                if (el.type === 'expense') {
+                    option = ( <option key={el.id} value={el.category}>{el.category}</option>);
+                }
+                return option;
+            })}
         </>
     }
 
